@@ -2,5 +2,5 @@
     renomar para .env e colocar sua KEY
 */
 module.exports =  {
-    authSecret :''
+    authSecret :'<SUA KEY SECRETA>'
 }
