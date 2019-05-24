@@ -12,6 +12,7 @@ module.exports = app => {
 
     const save = (req, res) => {
         getHash(req.body.password, (hash) => {
+            
             const password = hash
             
             app.db('users').insert({
