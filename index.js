@@ -1,10 +1,17 @@
 const express = require("express")
 const app = express()
+const consign = require('consign')
+const db = require('./config/db')
 
-app.get("/", (req, res) =>{
-    res.status(200).send("Meu Backend Funcionando");
-})
+consign()
+.then('./config/middlewares.js')
+.then('./api')
+.then('./config/routers.js')
+.into(app)
+
+
+app.db = db
 
 app.listen(3000, ()=>{
-    console.log("Backend iniando")
+    console.log("Backend inciando")
 })
