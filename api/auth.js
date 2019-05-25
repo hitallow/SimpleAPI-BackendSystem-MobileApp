@@ -1,34 +1,35 @@
 const { authSecret } = require('../.env')
 const jwt = require('jwt-simple')
-const bycrypt = require('bcrypt-nodejs')
-
+const bcrypt = require('bcrypt-nodejs')
 
 module.exports = app => {
-    const signin = async (req, resp) => {
+    const signin = async (req, res) => {
         if (!req.body.email || !req.body.password) {
-            return resp.status(400).send("Dados inválidos")
+            return res.status(400).send('Dados incompletos')
         }
-        const user = await app.db('users').where({ email: req.body.email }).first()
 
+        const user = await app.db('users')
+            .whereRaw("LOWER(email) = LOWER(?)", req.body.email)
+            .first()
 
         if (user) {
-            bycrypt.compare(req.body.password, user.password, (err, isMatch) => {
-                if (!isMatch || err) {
-                    return resp.status(400).send('Senha inválida')
+            bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+                if (err || !isMatch) {
+                    return res.status(401).send()
                 }
+
                 const payload = { id: user.id }
-
-                resp.json({
+                res.json({
                     name: user.name,
-                    email: user.name,
-                    token : jwt.encode(payload , authSecret)
+                    email: user.email,
+                    id: user.id,
+                    token: jwt.encode(payload, authSecret),
                 })
-
             })
         } else {
-            return resp.status(400).send('Usuário não encontrado')
+            res.status(400).send('Usuário não cadastrado!')
         }
-
     }
+
     return { signin }
 }

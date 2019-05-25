@@ -3,7 +3,7 @@ const moment = require('moment')
 
 module.exports = app => {
 
-    const getTask = (req, res) => {
+    const getTasks = (req, res) => {
         const date = req.body.date ? req.body.date : moment().endOf().toDate()
         app.db('tasks')
             .where({ userId: req.body.id })
@@ -14,11 +14,12 @@ module.exports = app => {
     }
 
 
-    const saveTask = (req, res) => {
+    const save = (req, res) => {
+        console.log(req.body)
         if (!req.body.desc.trim()) {
             return res.status(400).send('Descrição é obrigatório')
         }
-        req.body.userId = req.user.id
+        req.body.userId = req.userId
 
         app.db('tasks')
             .insert(req.body)
@@ -26,7 +27,7 @@ module.exports = app => {
             .catch(err => res.status(400).json(err))
     }
 
-    const removeTask = (req, res) => {
+    const remove = (req, res) => {
         app.db('tasks')
             .where({ id: req.params.id, userId: req.user.id })
             .del()
@@ -55,15 +56,17 @@ module.exports = app => {
             .where({ id: req.params.id, userId: req.user.id })
             .first()
             .then(task => {
-                if(!task){
+                if (!task) {
                     const msg = `Task com id ${req.params.id} não foi encontrada`
                     return res.status(400).send(msg)
                 }
                 const doneAt = task.doneAt ? null : new Date()
                 updateTask(req, res, doneAt)
             })
-            .catch( err => res.status(400).json(err))
+            .catch(err => res.status(400).json(err))
     }
 
-    return { getTask, saveTask, removeTask, toggleTask }
+    return { getTasks, save, remove, toggleTask }
 }
+
+
