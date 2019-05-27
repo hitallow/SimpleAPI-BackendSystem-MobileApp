@@ -31,10 +31,12 @@ module.exports = app => {
     }
 
     const remove = (req, res) => {
+
+        console.log(`Id do usuario que fez remove: ${req.user.id}`)
         app.db('tasks')
             .where({ id: req.params.id, userId: req.user.id })
             .del()
-            .the(rowDel => {
+            .then(rowDel => {
                 if (rowDel > 0) {
                     res.status(204).send()
                 } else {
@@ -45,7 +47,11 @@ module.exports = app => {
             .catch(err => res.status(400).json(err))
     }
 
+    
+
     const updateTask = (req, res, doneAt) => {
+
+        console.log(`Id do usuario que fez updateTask: ${req.user.id}`)
         app.db('tasks')
             .where({ id: req.params.id, userId: req.user.id })
             .update({ doneAt })
@@ -54,6 +60,8 @@ module.exports = app => {
     }
 
     const toggleTask = (req, res) => {
+
+        console.log(`Id do usuario que fez toggleTask: ${req.user.id}`)
 
         app.db('tasks')
             .where({ id: req.params.id, userId: req.user.id })
