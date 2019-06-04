@@ -5,8 +5,8 @@ module.exports = app => {
 
     const getTasks = (req, res) => {
         console.log(`Id do usuario que fez getTasks: ${req.user.id}`)
-        console.log(`data fornecida ${req.body.date}`)
-        const date = req.body.date ? req.body.date : moment().endOf('day').toDate()
+        console.log(`data fornecida ${req.query.date}`)
+        const date = req.query.date ? req.query.date : moment().endOf('day').toDate()
         console.log(`data pesquisada ${date}`)
         app.db('tasks')
             .where({ userId: req.user.id })
